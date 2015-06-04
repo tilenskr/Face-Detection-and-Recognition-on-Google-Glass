@@ -1,0 +1,3 @@
+<!-- For more information about voice trigger, check out: https://developers.google.com/glass/develop/gdk/starting-glassware -->
+<trigger keyword="@string/glass_voice_trigger">
+</trigger>

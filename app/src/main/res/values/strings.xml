@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Face Detection and Recognition - URVRV</string>
+    <string name="title_activity_main">Face Detection and Recognition</string>
+    <string name="glass_voice_trigger">Computer Vision</string>
+</resources>
