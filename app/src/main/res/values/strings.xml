@@ -2,4 +2,6 @@
     <string name="app_name">Face Detection and Recognition - URVRV</string>
     <string name="title_activity_main">Face Detection and Recognition</string>
     <string name="glass_voice_trigger">Computer Vision</string>
+    <string name="capture_camera">Camera Capture</string>
+    <string name="image_manipulation">Image Manipulation</string>
 </resources>
