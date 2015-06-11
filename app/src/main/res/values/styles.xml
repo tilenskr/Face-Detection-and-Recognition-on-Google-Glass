@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen"></style>
+    <!-- necessary DeviceDefault beacuse parent="android:Theme.Holo.Light.NoActionBar.Fullscreen
+    doesn't show Menu !-->
+    <style name="AppTheme" parent="android:Theme.DeviceDefault"></style>
 </resources>
