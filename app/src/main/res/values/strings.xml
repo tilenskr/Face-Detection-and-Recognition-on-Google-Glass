@@ -4,4 +4,5 @@
     <string name="glass_voice_trigger">Computer Vision</string>
     <string name="capture_camera">Camera Capture</string>
     <string name="image_manipulation">Image Manipulation</string>
+    <string name="resolutions">Available Resolutions</string>
 </resources>

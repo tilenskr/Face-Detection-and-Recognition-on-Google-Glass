@@ -2,8 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/itemCamera"
+        android:orderInCategory="2"
         android:title="@string/capture_camera" />
     <item
         android:id="@+id/itemImage"
-        android:title="@string/image_manipulation" />
+        android:title="@string/image_manipulation"
+        android:orderInCategory="3"/>
 </menu>

@@ -2,11 +2,14 @@ package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.hardware.Camera;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,6 +24,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
@@ -48,6 +52,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private Gestures mGestureDetector;
     private boolean isCameraUsed = true;
     private LocalPicturesDetection localPictures;
+    private List<Camera.Size> cameraResolutions;
+    private boolean isSubmenuAdded;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -57,6 +63,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                     Global.InfoDebug("MainActivity.mLoaderCallback.onManagerConnected:OpenCV loaded successfully");
                     faceDetection = new FaceDetection(mAppContext);
                     mOpenCvCameraView.enableView();
+
                    /* Mat mMat = null;
                     try {
                         mMat = Utils.loadResource(mAppContext, R.drawable.lena);
@@ -84,6 +91,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
         ivPicture = (ImageView) findViewById(R.id.ivPicture);
+        isSubmenuAdded = false;
        /* Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.lena);
         ivPicture.setImageBitmap(bitmap);*/
@@ -97,11 +105,30 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // This is called right before the menu is shown, every time it is shown.
+            if(isSubmenuAdded == false) {
+                SubMenu submenu = menu.addSubMenu(0, -1, 1, getString(R.string.resolutions));
+                int index = 0;
+                String textToDisplay;
+                for(Camera.Size resolution : cameraResolutions)
+                {
+                        textToDisplay = resolution.width + " x " + resolution.height;
+                        submenu.add(0, index, Menu.NONE, textToDisplay);
+                        index++;
+                }
+                isSubmenuAdded = true;
+            }
+
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection. Menu items typically start another
         // activity, start a service, or broadcast another intent.
+        Global.LogDebug("MainActivity.onOptionsItemSelected(): item name: " + item.getTitle() + " item id: " + item.getItemId());
         switch (item.getItemId()) {
             case R.id.itemCamera:
                 Global.LogDebug("MainActivity.onOptionsItemSelected(): R.id.itemCamera");
@@ -112,7 +139,18 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 isCameraUsed = false;
                 return true;
             default:
-                return super.onOptionsItemSelected(item);
+                if(item.getItemId() == -1) // submenu
+                {
+                    return super.onOptionsItemSelected(item);
+                }
+                else
+                {
+                    // we need to enable CameraView (and show it) hide ImageView to use Camera
+                    showCameraView();
+                    isCameraUsed = true;
+                    mOpenCvCameraView.setResolution(cameraResolutions.get(item.getItemId()));
+                    return true;
+                }
         }
     }
 
@@ -120,9 +158,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     public void onOptionsMenuClosed(Menu menu) { // called when you select an Item Menu or just cancel Menu
         Global.LogDebug("MainActivity.onOptionsMenuClosed");
         if (isCameraUsed) {
-            ivPicture.setVisibility(View.GONE);
-            mOpenCvCameraView.setVisibility(View.VISIBLE);
-            mOpenCvCameraView.enableView();
+          showCameraView();
         }
         else {
             manipulateStaticImage();
@@ -165,6 +201,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) { // needs  Bitmap type: 640*360 (so the same size as camera)
+
         //Mat outputFDPicture = faceDetection.getFaceDetectionPicture(inputFrame.rgba());
         //Mat result = new Mat();
         //Imgproc.cvtColor(outputFDPicture, result, Imgproc.COLOR_RGB2BGR555);
@@ -195,6 +232,11 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public void onTwoTap() {
+        // mOpenCvCameraView needs to be enabled and we can not do this in onManagerConnected (mCamera is null)
+        if(cameraResolutions == null) {
+            cameraResolutions = mOpenCvCameraView.getResolutionList();
+            removeUnWantedResolutions();
+        }
         // beacuse of lag, we disable when navigation on Menu
         mOpenCvCameraView.disableView();
         openOptionsMenu();
@@ -214,6 +256,33 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         ivPicture.setVisibility(View.VISIBLE);
         ivPicture.setImageBitmap(bitmap);
 
+    }
+
+    //  /* Select the size that fits surface considering maximum size allowed */ - from OpenCV
+    // so we ignore size which are higher than screen size (in our case 640 x 360)
+    private void removeUnWantedResolutions()
+    {
+        // screen dimensions
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        int screenHeight = displaymetrics.heightPixels;
+        int screenWidth = displaymetrics.widthPixels;
+        for(int i = 0; i < cameraResolutions.size();)
+        {
+            Camera.Size resolution = cameraResolutions.get(i);
+            if(resolution.width <= screenWidth && resolution.height <= screenHeight) {
+                i++;
+            }
+            else
+                cameraResolutions.remove(resolution);
+        }
+    }
+
+    private void showCameraView()
+    {
+        ivPicture.setVisibility(View.GONE);
+        mOpenCvCameraView.setVisibility(View.VISIBLE);
+        mOpenCvCameraView.enableView();
     }
 
 }

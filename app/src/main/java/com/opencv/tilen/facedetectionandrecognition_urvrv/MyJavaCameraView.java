@@ -14,6 +14,7 @@ import java.util.List;
 public class MyJavaCameraView extends JavaCameraView  {
     public MyJavaCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
     }
 
     public void setResolution(Camera.Size resolution) {
