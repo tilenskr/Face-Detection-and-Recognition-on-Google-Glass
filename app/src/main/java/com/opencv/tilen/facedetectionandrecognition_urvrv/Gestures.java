@@ -27,7 +27,7 @@ public class Gestures extends GestureDetector implements GestureDetector.BaseLis
     public boolean onGesture(Gesture gesture) {
         if(gesture == Gesture.TWO_TAP)
         {
-            Global.LogDebug("Gesutres.onGesture(): TWO_TAP");
+            Global.LogDebug("Gestures.onGesture(): TWO_TAP");
             mCallback.onTwoTap();
         }
         return false;

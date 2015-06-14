@@ -50,10 +50,13 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private FaceDetection faceDetection;
     private ImageView ivPicture;
     private Gestures mGestureDetector;
+
     private boolean isCameraUsed = true;
     private LocalPicturesDetection localPictures;
     private List<Camera.Size> cameraResolutions;
+    private List<int[]> cameraFpsRanges;
     private boolean isSubmenuAdded;
+    private int maxIndexResolution;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -118,9 +121,18 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                         submenu.add(0, index, Menu.NONE, textToDisplay);
                         index++;
                 }
+                maxIndexResolution = index;
+/*
+                submenu = menu.addSubMenu(0, -2,2 , getString(R.string.fps_ranges));
+                for(int[] fpsRange : cameraFpsRanges)
+                {
+                    textToDisplay = fpsRange[0] + ", " + fpsRange[1];
+                    submenu.add(0, index, Menu.NONE, textToDisplay);
+                    index++;
+                }
+                */
                 isSubmenuAdded = true;
             }
-
         return true;
     }
 
@@ -128,8 +140,9 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection. Menu items typically start another
         // activity, start a service, or broadcast another intent.
-        Global.LogDebug("MainActivity.onOptionsItemSelected(): item name: " + item.getTitle() + " item id: " + item.getItemId());
-        switch (item.getItemId()) {
+        int itemId = item.getItemId();
+        Global.LogDebug("MainActivity.onOptionsItemSelected(): item name: " + item.getTitle() + " item id: " + itemId);
+        switch (itemId) {
             case R.id.itemCamera:
                 Global.LogDebug("MainActivity.onOptionsItemSelected(): R.id.itemCamera");
                 isCameraUsed = true;
@@ -139,16 +152,24 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 isCameraUsed = false;
                 return true;
             default:
-                if(item.getItemId() == -1) // submenu
+                if(itemId < 0) // submenu
                 {
                     return super.onOptionsItemSelected(item);
                 }
-                else
+                else if(itemId < maxIndexResolution) // submenu items resolutions
                 {
                     // we need to enable CameraView (and show it) hide ImageView to use Camera
                     showCameraView();
                     isCameraUsed = true;
-                    mOpenCvCameraView.setResolution(cameraResolutions.get(item.getItemId()));
+                    mOpenCvCameraView.setResolution(cameraResolutions.get(itemId));
+                    return true;
+                }
+                else // submenu items fpsRanges
+                {
+                    itemId -= maxIndexResolution;
+                    showCameraView();
+                    isCameraUsed = true;
+                    mOpenCvCameraView.setFpsRange(cameraFpsRanges.get(itemId));
                     return true;
                 }
         }
@@ -202,24 +223,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) { // needs  Bitmap type: 640*360 (so the same size as camera)
 
-        //Mat outputFDPicture = faceDetection.getFaceDetectionPicture(inputFrame.rgba());
-        //Mat result = new Mat();
-        //Imgproc.cvtColor(outputFDPicture, result, Imgproc.COLOR_RGB2BGR555);
-        /*                    Mat mMat = null;
+        // it is the same performance with grey and color Image
+        Mat outputFDPicture = faceDetection.getFaceDetectionPicture(inputFrame.rgba());
 
-        try {
-            mMat = Utils.loadResource(this, R.drawable.lena);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Mat result = new Mat();
-        Global.TestDebug("test : " +mMat.cols());
-        Imgproc.cvtColor(mMat, result, Imgproc.COLOR_RGB2BGRA);
-        Bitmap bmp = Bitmap.createBitmap(mMat.cols(), mMat.rows(), Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(mMat, bmp);
-        Mat outMat = new Mat();
-        */
-        return inputFrame.rgba();
+        return outputFDPicture;
     }
 
     @Override
@@ -236,6 +243,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         if(cameraResolutions == null) {
             cameraResolutions = mOpenCvCameraView.getResolutionList();
             removeUnWantedResolutions();
+        }
+        if(cameraFpsRanges == null)
+        {
+            cameraFpsRanges = mOpenCvCameraView.getPreviewFpsRangeList();
         }
         // beacuse of lag, we disable when navigation on Menu
         mOpenCvCameraView.disableView();

@@ -28,5 +28,24 @@ public class MyJavaCameraView extends JavaCameraView  {
         return mCamera.getParameters().getSupportedPreviewSizes();
     }
 
+    public List<int[]> getPreviewFpsRangeList()
+    {
+        return mCamera.getParameters().getSupportedPreviewFpsRange();
+    }
+
+    //doesn't work, maybe in future version
+    public void setFpsRange(int[] fpsRange)
+    {
+        Camera.Parameters params = mCamera.getParameters();
+        // *1000 - cause are scaled values
+        params.setPreviewFpsRange(fpsRange[0], fpsRange[1]);
+        mCamera.setParameters(params);
+        //mCamera.getParameters().setPreviewFpsRange(fpsRange[0], fpsRange[1]);
+        disconnectCamera();
+        connectCamera(getWidth(), getHeight());
+    }
+
+
+
 
 }

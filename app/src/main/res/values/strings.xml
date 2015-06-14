@@ -5,4 +5,5 @@
     <string name="capture_camera">Camera Capture</string>
     <string name="image_manipulation">Image Manipulation</string>
     <string name="resolutions">Available Resolutions</string>
+    <string name="fps_ranges">Available FPS Ranges</string>
 </resources>
