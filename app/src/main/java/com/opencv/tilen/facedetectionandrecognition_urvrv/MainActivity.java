@@ -58,6 +58,11 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private boolean isSubmenuAdded;
     private int maxIndexResolution;
 
+    // constants for detecting zoom
+    private float previousTouch1 = -1;
+    private float previousTouch2 = -1;
+    private float previousAbsDistance = -1;
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -231,14 +236,26 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public boolean onGenericMotionEvent(MotionEvent event) {
+        boolean isGestureHandled = false;
         if (mGestureDetector != null) {
-            return mGestureDetector.onMotionEvent(event);
+            isGestureHandled = mGestureDetector.onMotionEvent(event);
         }
-        return false;
+        if(isGestureHandled == false)
+        {
+            if(event.getActionMasked() == MotionEvent.ACTION_MOVE)
+            {
+                Global.LogDebug("MainActivit.onGenericMotionEvent(): Action Move");
+                return processMotionEventsZooming(event);
+            }
+            else
+                return false;
+        }
+        else
+            return false;
     }
 
     @Override
-    public void onTwoTap() {
+    public void onThreeTap() {
         // mOpenCvCameraView needs to be enabled and we can not do this in onManagerConnected (mCamera is null)
         if(cameraResolutions == null) {
             cameraResolutions = mOpenCvCameraView.getResolutionList();
@@ -296,4 +313,30 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         mOpenCvCameraView.enableView();
     }
 
+    private Boolean processMotionEventsZooming(MotionEvent event) {
+        int pointerCount = event.getPointerCount();
+        if (pointerCount == 2)
+        {
+            float x1 = event.getX(0);
+            float x2 = event.getX(1);
+            if (previousTouch1 != -1 || previousTouch2 != -1) {
+                float differenceDistance =  Math.abs(x1-x2) - previousAbsDistance;
+                Global.TestDebug("MainActity.processMotionEventsZooming(): Difference beetween distances: " + differenceDistance);
+                if(differenceDistance > 10) // zooming in; threshold - ignore minor moves
+                {
+                    mOpenCvCameraView.setZoom(true);
+                }
+                else if(differenceDistance < -10 ) // zooming out; threshold - ignore minor moves
+                {
+                    mOpenCvCameraView.setZoom(false);
+                }
+            }
+            previousTouch1 = x1;
+            previousTouch2 = x2;
+            previousAbsDistance = Math.abs(x1-x2);
+            return true;
+        }
+        else
+            return false;
+    }
 }

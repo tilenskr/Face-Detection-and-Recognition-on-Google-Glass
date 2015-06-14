@@ -14,7 +14,7 @@ public class Gestures extends GestureDetector implements GestureDetector.BaseLis
 
     public interface OnGesturesCallback
     {
-        void onTwoTap();
+        void onThreeTap();
     }
     public Gestures(Context context, OnGesturesCallback callback)
     {
@@ -25,10 +25,11 @@ public class Gestures extends GestureDetector implements GestureDetector.BaseLis
 
     @Override
     public boolean onGesture(Gesture gesture) {
-        if(gesture == Gesture.TWO_TAP)
+        if(gesture == Gesture.THREE_TAP)
         {
-            Global.LogDebug("Gestures.onGesture(): TWO_TAP");
-            mCallback.onTwoTap();
+            Global.LogDebug("Gestures.onGesture(): THREE_TAP");
+            mCallback.onThreeTap();
+            return true;
         }
         return false;
     }

@@ -45,7 +45,27 @@ public class MyJavaCameraView extends JavaCameraView  {
         connectCamera(getWidth(), getHeight());
     }
 
-
-
+    public void setZoom(boolean increaseZoom)
+    {
+        Camera.Parameters params = mCamera.getParameters();
+        if(params.isZoomSupported() && mCamera != null)
+        {
+            int currentZoom = params.getZoom();
+            Global.LogDebug("MyJavaCameraView.setZoom(): Zoom is " + currentZoom);
+            if(increaseZoom) {
+                currentZoom = currentZoom + 1;
+                if(currentZoom > params.getMaxZoom())
+                    currentZoom = params.getZoom();
+                params.setZoom(currentZoom);
+            }
+            else {
+                currentZoom = currentZoom -1;
+                if(currentZoom < 0)
+                    currentZoom = 0;
+                params.setZoom(currentZoom);
+            }
+            mCamera.setParameters(params);
+        }
+    }
 
 }
