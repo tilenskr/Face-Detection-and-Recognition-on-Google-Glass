@@ -69,7 +69,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS: {
                     Global.InfoDebug("MainActivity.mLoaderCallback.onManagerConnected:OpenCV loaded successfully");
-                    faceDetection = new FaceDetection(mAppContext);
+                    faceDetection = FaceDetection.getInstance(mAppContext);
                     mOpenCvCameraView.enableView();
 
                    /* Mat mMat = null;

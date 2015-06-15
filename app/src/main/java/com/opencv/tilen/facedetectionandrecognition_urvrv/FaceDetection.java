@@ -26,9 +26,21 @@ public class FaceDetection {
     private Context mContext;
     private String frontalFaceClassifier;
     private String frontalFaceClassifierFilename;
-    private CascadeClassifier faceDetector;
+    private CascadeClassifier faceDetectorCascadeClassifier;
+    private static FaceDetection faceDetector = null;
 
-    public FaceDetection(Context context) {
+
+    public static FaceDetection getInstance(Context context)
+    {
+        //singleton
+        if(faceDetector == null)
+        {
+            faceDetector = new FaceDetection(context);
+        }
+        return faceDetector;
+    }
+
+    private FaceDetection(Context context) {
         mContext = context;
         getClassifierFilename();
         loadClassifierString(frontalFaceId);
@@ -103,8 +115,8 @@ public class FaceDetection {
 
     private void setUpCascadeClassifier()
     {
-        faceDetector = new CascadeClassifier(frontalFaceClassifierFilename);
-        if(faceDetector.empty() == true)
+        faceDetectorCascadeClassifier = new CascadeClassifier(frontalFaceClassifierFilename);
+        if(faceDetectorCascadeClassifier.empty() == true)
             Global.ErrorDebug("FaceDetection.getFaceDetectionPicture(): Classifier has not been loaded. ClassifierFilePath: " + frontalFaceClassifierFilename);
     }
     public Mat getFaceDetectionPicture(Mat inputPicture)
@@ -114,7 +126,7 @@ public class FaceDetection {
 
         // MatOfRect is a special container class for Rect. Probably such as vector in c++ (MatOf...)
         MatOfRect faceDetectionRectangles = new MatOfRect();
-        faceDetector.detectMultiScale(inputPicture, faceDetectionRectangles);
+        faceDetectorCascadeClassifier.detectMultiScale(inputPicture, faceDetectionRectangles);
         Rect[] rectangles = faceDetectionRectangles.toArray();
         Global.LogDebug("FaceDetection.getFaceDetectionPicture() Number of faces: " + rectangles.length);
         for(Rect rect : rectangles)
