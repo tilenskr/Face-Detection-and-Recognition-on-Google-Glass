@@ -8,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Toast;
 
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollAdapter;
@@ -23,6 +22,7 @@ public class StaticImagesActivity extends Activity {
     private CardScrollView mCardScroller;
     private CardScrollAdapter mAdapter;
     private List<PictureData> resourcePictures;
+    private static final int FACES_NUMBER_REQUEST = 1;
 
 
     @Override
@@ -71,14 +71,28 @@ public class StaticImagesActivity extends Activity {
                     PictureData pictureData = (PictureData) mCardScroller.getSelectedItem();
                     intent.putExtra(FacesActivity.RESOURCEID, pictureData.getResourceId());
                     intent.putExtra(FacesActivity.RESOURCENAME, pictureData.getResourceName());
-                    //startActivity(intent);
-                    Toast.makeText(this,"No Face Detected", Toast.LENGTH_LONG).show();
+                    startActivityForResult(intent, FACES_NUMBER_REQUEST);
+                    //Toast.makeText(this,"No Face Detected", Toast.LENGTH_LONG).show();
 
                     break;
             }
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == FACES_NUMBER_REQUEST)
+        {
+            // no faces were detected on picture
+            if(resultCode == RESULT_CANCELED)
+            {
+                AlertDialog alertDialog = new AlertDialog(this,R.drawable.ic_warning_150, R.string.no_face, R.string.tap_choose_picture);
+                alertDialog.setCancelable(true);
+                alertDialog.show();
+             }
+        }
     }
 
 
