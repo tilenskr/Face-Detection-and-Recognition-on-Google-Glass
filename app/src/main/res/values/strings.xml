@@ -6,4 +6,9 @@
     <string name="image_manipulation">Image Manipulation</string>
     <string name="resolutions">Available Resolutions</string>
     <string name="fps_ranges">Available FPS Ranges</string>
+    <string name="title_activity_static_images">StaticImagesActivity</string>
+    <string name="detect_faces">Detect Faces</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_faces">FacesActivity</string>
 </resources>

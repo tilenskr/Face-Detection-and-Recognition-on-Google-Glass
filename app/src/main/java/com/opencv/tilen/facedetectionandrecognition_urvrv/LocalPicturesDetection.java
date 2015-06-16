@@ -18,7 +18,7 @@ public class LocalPicturesDetection {
     public LocalPicturesDetection(Context context,int resourceId) throws IOException {
         this.mContext = context;
        /* localPicture = new Mat();
-        Bitmap bMap= BitmapFactory.decodeResource(mContext.getResources(), R.drawable.lena);
+        Bitmap bMap= BitmapFactory.decodeResource(mContext.getResources(), R.drawable.test_image_0);
         Utils.bitmapToMat(bMap, localPicture);*/
 
         localPicture = Utils.loadResource(context, resourceId);

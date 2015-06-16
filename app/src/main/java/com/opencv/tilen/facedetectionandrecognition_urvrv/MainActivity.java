@@ -1,6 +1,7 @@
 package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollView;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -74,7 +76,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
                    /* Mat mMat = null;
                     try {
-                        mMat = Utils.loadResource(mAppContext, R.drawable.lena);
+                        mMat = Utils.loadResource(mAppContext, R.drawable.test_image_0);
                     } catch (IOException e) {
                         e.printStackTrace(); */
                 }
@@ -92,6 +94,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        // to request voice menu on this activity
+        getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mGestureDetector = new Gestures(this, this);
@@ -101,9 +105,19 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         ivPicture = (ImageView) findViewById(R.id.ivPicture);
         isSubmenuAdded = false;
        /* Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),
-                R.drawable.lena);
+                R.drawable.test_image_0);
         ivPicture.setImageBitmap(bitmap);*/
 
+    }
+
+    @Override
+    public boolean onCreatePanelMenu(int featureId, Menu menu) {
+        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+            getMenuInflater().inflate(R.menu.menu_voice_main, menu);
+            return true;
+        }
+        // Pass through to super to setup touch menu.
+        return super.onCreatePanelMenu(featureId, menu);
     }
 
     @Override
@@ -111,6 +125,21 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        if(featureId == WindowUtils.FEATURE_VOICE_COMMANDS)
+        {
+            switch (item.getItemId())
+            {
+                case R.id.itemDetect:
+                    // TODO open an activity and show user images of faces
+                    break;
+            }
+            return true;
+        }
+        return super.onMenuItemSelected(featureId, item);
     }
 
     @Override
@@ -127,9 +156,9 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                         index++;
                 }
                 maxIndexResolution = index;
-/*
-                submenu = menu.addSubMenu(0, -2,2 , getString(R.string.fps_ranges));
-                for(int[] fpsRange : cameraFpsRanges)
+                /*
+                    submenu = menu.addSubMenu(0, -2,2 , getString(R.string.fps_ranges));
+                    for(int[] fpsRange : cameraFpsRanges)
                 {
                     textToDisplay = fpsRange[0] + ", " + fpsRange[1];
                     submenu.add(0, index, Menu.NONE, textToDisplay);
@@ -187,7 +216,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
           showCameraView();
         }
         else {
-            manipulateStaticImage();
+            Intent intent = new Intent(this,StaticImagesActivity.class);
+            startActivity(intent);
         }
         super.onOptionsMenuClosed(menu);
     }
@@ -273,7 +303,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private void manipulateStaticImage() {
         mOpenCvCameraView.setVisibility(View.GONE);
         try {
-            localPictures = new LocalPicturesDetection(this, R.drawable.lena);
+            localPictures = new LocalPicturesDetection(this, R.drawable.test_image_0);
         } catch (IOException e) {
             Global.ErrorDebug("MainActivity.manipulateStaticImage(): " + e.toString());
         }

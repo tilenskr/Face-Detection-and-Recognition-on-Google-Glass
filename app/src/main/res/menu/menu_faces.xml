@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/itemRecognize"
+        android:title="@string/detect_faces"/>
+    <item
+        android:id="@+id/itemTrain"
+        android:title="@string/detect_faces"/>
+</menu>
