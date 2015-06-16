@@ -6,11 +6,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class FacesActivity extends Activity {
+    public final static String RESOURCEID = "resource_id";
+    public final static String RESOURCENAME = "resource_name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_faces);
+        finish();
     }
 
     @Override

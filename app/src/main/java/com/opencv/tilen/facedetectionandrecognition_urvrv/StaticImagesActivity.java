@@ -1,12 +1,14 @@
 package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollAdapter;
@@ -65,7 +67,13 @@ public class StaticImagesActivity extends Activity {
             switch (item.getItemId())
             {
                 case R.id.itemDetect:
-                    // TODO open an activity and show user images of faces
+                    Intent intent = new Intent(this, FacesActivity.class);
+                    PictureData pictureData = (PictureData) mCardScroller.getSelectedItem();
+                    intent.putExtra(FacesActivity.RESOURCEID, pictureData.getResourceId());
+                    intent.putExtra(FacesActivity.RESOURCENAME, pictureData.getResourceName());
+                    //startActivity(intent);
+                    Toast.makeText(this,"No Face Detected", Toast.LENGTH_LONG).show();
+
                     break;
             }
             return true;
