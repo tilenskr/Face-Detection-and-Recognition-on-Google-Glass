@@ -21,9 +21,9 @@ public class StaticImagesActivity extends Activity {
 
     private CardScrollView mCardScroller;
     private CardScrollAdapter mAdapter;
+
     private List<PictureData> resourcePictures;
     private static final int FACES_NUMBER_REQUEST = 1;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +35,6 @@ public class StaticImagesActivity extends Activity {
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(mCardScroller);
-       // setCardScrollerListener();
     }
 
     @Override

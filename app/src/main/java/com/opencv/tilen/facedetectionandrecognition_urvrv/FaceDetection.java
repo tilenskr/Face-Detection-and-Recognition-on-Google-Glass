@@ -119,6 +119,7 @@ public class FaceDetection {
         if(faceDetectorCascadeClassifier.empty() == true)
             Global.ErrorDebug("FaceDetection.getFaceDetectionPicture(): Classifier has not been loaded. ClassifierFilePath: " + frontalFaceClassifierFilename);
     }
+    /** picture with rectangles for all faces **/
     public Mat getFaceDetectionPicture(Mat inputPicture)
     {
         //inputPicture = localPictures.getlocalPicture();
@@ -135,4 +136,19 @@ public class FaceDetection {
         }
         return inputPicture;
     }
+
+    /** get pictures of all faces in main picture **/
+    public Mat[] getFacePictures(Mat inputPicture)
+    {
+        MatOfRect faceDetectionRectangles = new MatOfRect();
+        faceDetectorCascadeClassifier.detectMultiScale(inputPicture, faceDetectionRectangles);
+        Rect[] rectangles = faceDetectionRectangles.toArray();
+        if(rectangles.length == 0) // not face detected
+            return null;
+        Mat[] facePictures = new Mat[rectangles.length];
+        for(int i = 0; i < rectangles.length; i++)
+            facePictures[i] =  new Mat(inputPicture,rectangles[i]);
+        return facePictures;
+    }
+
 }
