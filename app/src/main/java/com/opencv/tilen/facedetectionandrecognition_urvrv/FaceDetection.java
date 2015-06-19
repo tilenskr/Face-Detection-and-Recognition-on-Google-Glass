@@ -28,10 +28,16 @@ public class FaceDetection {
     private String frontalFaceClassifierFilename;
     private CascadeClassifier faceDetectorCascadeClassifier;
     private static FaceDetection faceDetector = null;
+    private int numberOfFacesInCurrentImage;
 
+
+    public int getNumberOfFacesInCurrentImage() {
+        return numberOfFacesInCurrentImage;
+    }
 
     public static FaceDetection getInstance(Context context)
     {
+
         //singleton
         if(faceDetector == null)
         {
@@ -130,6 +136,7 @@ public class FaceDetection {
         faceDetectorCascadeClassifier.detectMultiScale(inputPicture, faceDetectionRectangles);
         Rect[] rectangles = faceDetectionRectangles.toArray();
         Global.LogDebug("FaceDetection.getFaceDetectionPicture() Number of faces: " + rectangles.length);
+        numberOfFacesInCurrentImage = rectangles.length;
         for(Rect rect : rectangles)
         {
             Core.rectangle(inputPicture, rect.tl(), rect.br(), new Scalar(154,250,0));

@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/itemCamera"
-        android:orderInCategory="3"
-        android:title="@string/capture_camera" />
+        android:id="@+id/itemSubmenuToggleFaceDetection"
+        android:title="@string/toggle_face_detection"
+        android:orderInCategory="3">
+        <menu>
+            <item
+                android:id="@+id/itemToggleFDOn"
+                android:title="@string/toggle_face_detection_on" />
+            <item
+                android:id="@+id/itemToggleFDOff"
+                android:title="@string/toggle_face_detection_off" />
+        </menu>
+    </item>
+
     <item
-        android:id="@+id/itemImage"
+        android:id="@+id/itemImageManipulation"
         android:title="@string/image_manipulation"
         android:orderInCategory="4"/>
 </menu>

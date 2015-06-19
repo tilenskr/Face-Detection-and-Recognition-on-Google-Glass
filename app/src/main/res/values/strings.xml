@@ -10,6 +10,9 @@
     <string name="detect_faces">Detect faces</string>
     <string name="no_face">No face detected</string>
     <string name="tap_choose_picture">Tap to choose another picture</string>
+    <string name="toggle_face_detection">Camera Detection</string>
+    <string name="toggle_face_detection_on">On</string>
+    <string name="toggle_face_detection_off">Off</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_faces">FacesActivity</string>
