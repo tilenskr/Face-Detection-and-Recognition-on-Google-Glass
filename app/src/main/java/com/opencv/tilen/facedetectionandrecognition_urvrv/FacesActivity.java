@@ -2,6 +2,7 @@ package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,19 +11,18 @@ import android.view.WindowManager;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
-import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-
-import java.io.IOException;
 
 public class FacesActivity extends Activity {
     public final static String RESOURCEID = "resource_id";
     public final static String RESOURCENAME = "resource_name";
+    public final static String FACENUMBER = "face_number;";
+
     private CardScrollView mCardScroller;
     private CardScrollAdapter mAdapter;
 
     Mat originalPicture;
-    Mat[] facePictures;
+    Bitmap[] facePictures;
     String pictureName;
     private FaceDetection faceDetection;
 
@@ -70,22 +70,9 @@ public class FacesActivity extends Activity {
     private void initializeFaceImages()
     {
         Intent intent = getIntent();
-        int pictureResourceId = intent.getIntExtra(RESOURCEID,-1);
         pictureName = intent.getStringExtra(RESOURCENAME);
-        // you probably don't need to implement BaseLoaderCallback, because you do in Main Activity ?
-        try {
-            originalPicture = Utils.loadResource(this, pictureResourceId);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        faceDetection = FaceDetection.getInstance(this);
-        facePictures = faceDetection.getFacePictures(originalPicture);
-        if(facePictures != null )
-            setResult(RESULT_OK, null);
-        else
-        {
-            setResult(RESULT_CANCELED, null);// don't need Intent data
-            finish();
-        }
+        int numberOfFaces = intent.getIntExtra(FACENUMBER, -1);
+        facePictures = LocalPicturesDetection.loadBitmaps(numberOfFaces,this);
+
     }
 }

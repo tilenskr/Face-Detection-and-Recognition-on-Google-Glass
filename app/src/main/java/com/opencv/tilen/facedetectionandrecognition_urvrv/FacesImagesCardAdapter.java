@@ -10,17 +10,15 @@ import android.widget.ImageView;
 import com.google.android.glass.widget.CardBuilder;
 import com.google.android.glass.widget.CardScrollAdapter;
 
-import org.opencv.core.Mat;
-
 /**
  * Created by Tilen on 17.6.2015.
  */
 public class FacesImagesCardAdapter extends CardScrollAdapter{
     private final Context mContext;
     private final String imageName;
-    private final Mat[] faceImages;
+    private final Bitmap[] faceImages;
 
-    public FacesImagesCardAdapter(Context mContext, String imageName, Mat[] faceImages) {
+    public FacesImagesCardAdapter(Context mContext, String imageName, Bitmap[] faceImages) {
         this.mContext = mContext;
         this.imageName = imageName;
         this.faceImages = faceImages;
@@ -38,13 +36,12 @@ public class FacesImagesCardAdapter extends CardScrollAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Bitmap bitmapImage = LocalPicturesDetection.matToBitmap(faceImages[position]);
         CardBuilder card = new CardBuilder(mContext, CardBuilder.Layout.EMBED_INSIDE)
                 .setEmbeddedLayout(R.layout.activity_static_images)
                 .setFootnote(imageName + " " + (position + 1)); // 0 - picture is first picture, ...
         View view = card.getView(convertView, parent);
         ImageView ivPicture = (ImageView) view.findViewById(R.id.ivPicture);
-        ivPicture.setImageBitmap(bitmapImage);
+        ivPicture.setImageBitmap(faceImages[position]);
         return view;
     }
 

@@ -42,6 +42,13 @@ public class StaticImagesCardAdapter extends CardScrollAdapter {
         View view = card.getView(convertView, parent);
         ImageView ivPicture = (ImageView) view.findViewById(R.id.ivPicture);
         ivPicture.setImageResource(pictureData.getResourceId());
+        // test converting from Bitmap to Mat and inversely
+       /*Bitmap testBitmap = BitmapFactory.decodeResource(mContext.getResources(),
+               pictureData.getResourceId());
+        Mat testMat = LocalPicturesDetection.bitmapToMat(testBitmap);
+        Bitmap testOutputBitmap = LocalPicturesDetection.matToBitmap(testMat);
+        ivPicture.setImageBitmap(testOutputBitmap);
+        */
         return view;
     }
 

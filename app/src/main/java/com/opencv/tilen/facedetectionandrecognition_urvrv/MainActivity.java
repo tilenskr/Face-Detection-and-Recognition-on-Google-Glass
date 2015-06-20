@@ -58,7 +58,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     private Mat currentCameraImage;
 
-    private boolean isCaptureFaceDetectionUsed = true;
+    private boolean isCaptureFaceDetectionUsed = false;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override

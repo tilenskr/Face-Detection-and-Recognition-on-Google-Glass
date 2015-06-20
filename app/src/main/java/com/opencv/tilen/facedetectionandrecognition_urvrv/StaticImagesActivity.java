@@ -2,6 +2,8 @@ package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,6 +14,9 @@ import android.widget.AdapterView;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
+import com.google.android.glass.widget.Slider;
+
+import org.opencv.core.Mat;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -25,6 +30,12 @@ public class StaticImagesActivity extends Activity {
     private List<PictureData> resourcePictures;
     private static final int FACES_NUMBER_REQUEST = 1;
 
+    private FaceDetection faceDetection;
+
+    // slider
+    private Slider mSlider;
+    private Slider.Indeterminate mIndeterminate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +43,8 @@ public class StaticImagesActivity extends Activity {
         mAdapter = new StaticImagesCardAdapter(this, resourcePictures);
         mCardScroller = new CardScrollView(this);
         mCardScroller.setAdapter(mAdapter);
+        // Set the view for the Slider
+        mSlider = Slider.from(mCardScroller);
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(mCardScroller);
@@ -66,35 +79,13 @@ public class StaticImagesActivity extends Activity {
             switch (item.getItemId())
             {
                 case R.id.itemDetect:
-                    Intent intent = new Intent(this, FacesActivity.class);
-                    PictureData pictureData = (PictureData) mCardScroller.getSelectedItem();
-                    intent.putExtra(FacesActivity.RESOURCEID, pictureData.getResourceId());
-                    intent.putExtra(FacesActivity.RESOURCENAME, pictureData.getResourceName());
-                    startActivityForResult(intent, FACES_NUMBER_REQUEST);
-                    //Toast.makeText(this,"No Face Detected", Toast.LENGTH_LONG).show();
-
+                    startFacesActivity();
                     break;
             }
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == FACES_NUMBER_REQUEST)
-        {
-            // no faces were detected on picture
-            if(resultCode == RESULT_CANCELED)
-            {
-                AlertDialog alertDialog = new AlertDialog(this,R.drawable.ic_warning_150, R.string.no_face, R.string.tap_choose_picture);
-                alertDialog.setCancelable(true);
-                alertDialog.show();
-             }
-        }
-    }
-
-
 
     private void setCardScrollerListener() {
         mCardScroller.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -133,5 +124,33 @@ public class StaticImagesActivity extends Activity {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void startFacesActivity()
+    {
+        // slider slows down performance TODO - needs some actual tests
+        mIndeterminate = mSlider.startIndeterminate();
+        faceDetection = FaceDetection.getInstance(this);
+        PictureData pictureData = (PictureData) mCardScroller.getSelectedItem();
+        Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),
+                pictureData.getResourceId());
+        Mat matImage= LocalPicturesDetection.bitmapToMat(bitmapImage);
+        Mat[] faceImages = faceDetection.getFacePictures(matImage);
+        if(faceImages != null) {
+            LocalPicturesDetection.saveBitmaps(faceImages, this); // it takes some time (not the best)
+            Intent intent = new Intent(this, FacesActivity.class);
+            intent.putExtra(FacesActivity.RESOURCENAME, pictureData.getResourceName());
+            intent.putExtra(FacesActivity.FACENUMBER, faceImages.length);
+            mIndeterminate.hide();
+            startActivity(intent);
+        }
+        else {
+            mIndeterminate.hide();
+            AlertDialog alertDialog = new AlertDialog(this, R.drawable.ic_warning_150, R.string.no_face, R.string.tap_choose_picture);
+            alertDialog.setCancelable(true);
+            alertDialog.show();
+        }
+        //Toast.makeText(this,"No Face Detected", Toast.LENGTH_LONG).show();
+
     }
 }
