@@ -2,8 +2,6 @@ package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,8 +14,10 @@ import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 import com.google.android.glass.widget.Slider;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +79,7 @@ public class StaticImagesActivity extends Activity {
             switch (item.getItemId())
             {
                 case R.id.itemDetect:
-                    startFacesActivity();
+                    checkFacesOnImage();
                     break;
             }
             return true;
@@ -126,15 +126,21 @@ public class StaticImagesActivity extends Activity {
         }
     }
 
-    private void startFacesActivity()
+    private void checkFacesOnImage()
     {
         // slider slows down performance TODO - needs some actual tests
         mIndeterminate = mSlider.startIndeterminate();
         faceDetection = FaceDetection.getInstance(this);
         PictureData pictureData = (PictureData) mCardScroller.getSelectedItem();
-        Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),
+        /*Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),
                 pictureData.getResourceId());
-        Mat matImage= LocalPicturesDetection.bitmapToMat(bitmapImage);
+        Mat matImage= LocalPicturesDetection.bitmapToMat(bitmapImage);*/
+        Mat matImage = null;
+        try {
+            matImage = Utils.loadResource(this, pictureData.getResourceId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Mat[] faceImages = faceDetection.getFacePictures(matImage);
         if(faceImages != null) {
             LocalPicturesDetection.saveBitmaps(faceImages, this); // it takes some time (not the best)

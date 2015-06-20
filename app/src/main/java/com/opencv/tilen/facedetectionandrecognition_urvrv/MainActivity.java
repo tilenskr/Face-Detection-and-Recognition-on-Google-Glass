@@ -2,7 +2,6 @@ package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -12,20 +11,20 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.SurfaceView;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollView;
+import com.google.android.glass.widget.Slider;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,8 +41,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     private MyJavaCameraView mOpenCvCameraView;
     private FaceDetection faceDetection;
-    private ImageView ivPicture;
     private Gestures mGestureDetector;
+    private RelativeLayout rlMainActivity;
 
     private LocalPicturesDetection localPictures;
     private List<Camera.Size> cameraResolutions;
@@ -59,6 +58,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private Mat currentCameraImage;
 
     private boolean isCaptureFaceDetectionUsed = false;
+
+    // slider - can be only used with cards ??
+    private Slider mSlider;
+    private Slider.Indeterminate mIndeterminate;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -94,10 +97,11 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mGestureDetector = new Gestures(this, this);
+        rlMainActivity = (RelativeLayout) findViewById(R.id.rlMainActivity);
         mOpenCvCameraView = (MyJavaCameraView) findViewById(R.id.tutorial1_activity_java_surface_view);
+        //mSlider.from(rlMainActivity);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        ivPicture = (ImageView) findViewById(R.id.ivPicture);
         isSubmenuAdded = false;
        /* Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.test_image_0);
@@ -129,13 +133,14 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             switch (item.getItemId())
             {
                 case R.id.itemDetect:
-                    // TODO open an activity and show user images of faces
+                    checkFacesOnImage();
                     break;
             }
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
     }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -253,11 +258,11 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         // if isCaptureFaceDetectionUsed == true we use last image, where faces were detected, else we use last image from camera
         if(isCaptureFaceDetectionUsed == true)
         {
+            //inputFrame.rgba() - returns an image and is always different (not the same object!)
             // it is the same performance with grey and color Image
             Mat outputFDPicture = faceDetection.getFaceDetectionPicture(inputFrame.rgba());
-            if(faceDetection.getNumberOfFacesInCurrentImage() != 0) {
-                currentCameraImage = outputFDPicture;
-            }
+            if(faceDetection.getNumberOfFacesInCurrentImage() != 0)
+                currentCameraImage = inputFrame.rgba().clone(); // need to clone because Garbage Collector and referencing
             return outputFDPicture;
         }
         else
@@ -305,21 +310,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         openOptionsMenu();
     }
 
-    private void manipulateStaticImage() {
-        mOpenCvCameraView.setVisibility(View.GONE);
-        try {
-            localPictures = new LocalPicturesDetection(this, R.drawable.test_image_0);
-        } catch (IOException e) {
-            Global.ErrorDebug("MainActivity.manipulateStaticImage(): " + e.toString());
-        }
-        //TODO change
-        Mat outputPicture = faceDetection.getFaceDetectionPicture(localPictures.getlocalPicture());
-        Global.TestDebug("manipulateStaticImage():" + outputPicture.cols());
-        Bitmap bitmap = LocalPicturesDetection.matToBitmap(outputPicture);
-        ivPicture.setVisibility(View.VISIBLE);
-        ivPicture.setImageBitmap(bitmap);
-
-    }
 
     //  /* Select the size that fits surface considering maximum size allowed */ - from OpenCV
     // so we ignore size which are higher than screen size (in our case 640 x 360)
@@ -343,10 +333,36 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     private void showCameraView()
     {
-        ivPicture.setVisibility(View.GONE);
-        mOpenCvCameraView.setVisibility(View.VISIBLE);
         mOpenCvCameraView.enableView();
     }
+
+    private void checkFacesOnImage() {
+        // we can clone image before we disable view (probably it's still accessible)
+        currentCameraImage = currentCameraImage.clone();
+        mOpenCvCameraView.disableView();
+        //mIndeterminate = mSlider.startIndeterminate();
+        Mat convertedPicture = new Mat();
+        // we need to convert to RGB, because we get BGR value from Camera (also default in OpenCV)
+        // when we load image from resources, it loads as RGB and we don't need to convert
+        Imgproc.cvtColor(currentCameraImage,convertedPicture,Imgproc.COLOR_BGRA2RGB);
+        Mat[] faceImages = faceDetection.getFacePictures(convertedPicture);
+        if(faceImages != null) {
+            LocalPicturesDetection.saveBitmaps(faceImages, this); // it takes some time (not the best)
+            Intent intent = new Intent(this, FacesActivity.class);
+            intent.putExtra(FacesActivity.RESOURCENAME, getString(R.string.camera_image));
+            intent.putExtra(FacesActivity.FACENUMBER, faceImages.length);
+            //mIndeterminate.hide();
+            startActivity(intent);
+        }
+        else {
+           // mIndeterminate.hide();
+            AlertDialog alertDialog = new AlertDialog(this, R.drawable.ic_warning_150, R.string.no_face, R.string.tap_to_capture);
+            alertDialog.setCancelable(true);
+            alertDialog.show();
+            mOpenCvCameraView.enableView();
+        }
+    }
+
 
     private Boolean processMotionEventsZooming(MotionEvent event) {
         int pointerCount = event.getPointerCount();
@@ -374,4 +390,5 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         else
             return false;
     }
+
 }

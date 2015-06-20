@@ -11,20 +11,15 @@ import android.view.WindowManager;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
-import org.opencv.core.Mat;
-
 public class FacesActivity extends Activity {
-    public final static String RESOURCEID = "resource_id";
     public final static String RESOURCENAME = "resource_name";
     public final static String FACENUMBER = "face_number;";
 
     private CardScrollView mCardScroller;
     private CardScrollAdapter mAdapter;
 
-    Mat originalPicture;
     Bitmap[] facePictures;
     String pictureName;
-    private FaceDetection faceDetection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

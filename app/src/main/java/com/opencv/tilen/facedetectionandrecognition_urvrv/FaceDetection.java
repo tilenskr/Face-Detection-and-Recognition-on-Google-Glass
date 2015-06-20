@@ -133,6 +133,7 @@ public class FaceDetection {
 
         // MatOfRect is a special container class for Rect. Probably such as vector in c++ (MatOf...)
         MatOfRect faceDetectionRectangles = new MatOfRect();
+        inputPicture = inputPicture.clone();// necessary a clone to avoid referencing the same object
         faceDetectorCascadeClassifier.detectMultiScale(inputPicture, faceDetectionRectangles);
         Rect[] rectangles = faceDetectionRectangles.toArray();
         Global.LogDebug("FaceDetection.getFaceDetectionPicture() Number of faces: " + rectangles.length);
@@ -155,6 +156,7 @@ public class FaceDetection {
         Mat[] facePictures = new Mat[rectangles.length];
         for(int i = 0; i < rectangles.length; i++)
             facePictures[i] =  new Mat(inputPicture,rectangles[i]);
+        //!if there are some error about wrong picture or destroyed clone image!
         return facePictures;
     }
 
