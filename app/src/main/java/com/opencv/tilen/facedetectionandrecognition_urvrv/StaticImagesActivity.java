@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollAdapter;
@@ -85,20 +83,6 @@ public class StaticImagesActivity extends Activity {
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
-    }
-
-    private void setCardScrollerListener() {
-        mCardScroller.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Global.LogDebug("StaticImagesActivity.setCardScrollerListener(): position: " + position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     /** get ResourceID and ResourceName **/

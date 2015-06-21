@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/itemRecognize"
-        android:title="@string/detect_faces"/>
+        android:title="@string/predict_face"/>
     <item
         android:id="@+id/itemTrain"
-        android:title="@string/detect_faces"/>
+        android:title="@string/train_face"/>
 </menu>

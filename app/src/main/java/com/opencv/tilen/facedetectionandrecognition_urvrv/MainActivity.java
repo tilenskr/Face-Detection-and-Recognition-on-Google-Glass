@@ -44,7 +44,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private Gestures mGestureDetector;
     private RelativeLayout rlMainActivity;
 
-    private LocalPicturesDetection localPictures;
     private List<Camera.Size> cameraResolutions;
     private List<int[]> cameraFpsRanges;
     private boolean isSubmenuAdded;

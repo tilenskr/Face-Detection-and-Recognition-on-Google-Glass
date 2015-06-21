@@ -15,6 +15,10 @@
     <string name="toggle_face_detection_off">Off</string>
     <string name="camera_image">Camera Image</string>
     <string name="tap_to_capture">Tap to capture another picture from camera</string>
+    <string name="predict_face">Predict face</string>
+    <string name="train_face">Train face</string>
+    <string name="face_name">Face</string>
+    <string name="say_name">Say a Name</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
