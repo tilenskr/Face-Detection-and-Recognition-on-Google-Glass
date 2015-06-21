@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -15,6 +16,7 @@ import com.google.android.glass.widget.CardScrollView;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class FacesActivity extends Activity {
     public final static String RESOURCENAME = "resource_name";
@@ -28,6 +30,8 @@ public class FacesActivity extends Activity {
 
     private static final int SPEECH_REQUEST = 0;
 
+    TextToSpeech textToSpeech;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,15 @@ public class FacesActivity extends Activity {
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(mCardScroller);
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener(){
+
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.UK);
+                }
+            }
+        });
     }
 
     @Override
@@ -51,6 +64,15 @@ public class FacesActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mCardScroller.deactivate();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(textToSpeech !=null){
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
     }
 
     @Override
@@ -69,7 +91,11 @@ public class FacesActivity extends Activity {
         {
             switch (item.getItemId())
             {
-                case R.id.itemRecognize:
+                case R.id.itemPredict:
+                    // when predicts a face notifies user as sound trough TextToSpeech
+                    //TODO change here
+                    textToSpeech.speak(String.format(getString(R.string.face_result_format), "John" ),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
+                            null);
                     break;
                 case R.id.itemTrain:
                     // speak and say nickname (or just name) that describe a person (can contain more words)
@@ -90,7 +116,7 @@ public class FacesActivity extends Activity {
             List<String> spokenText = data.getStringArrayListExtra(
                     RecognizerIntent.EXTRA_RESULTS);
             Global.InfoDebug("FacesActivity.onActivityResult(): spokenText: " + Arrays.toString(spokenText.toArray()));
-            // Do something with spokenText.
+            // TODO Do something with spokenText.
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
