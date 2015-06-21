@@ -37,7 +37,6 @@ public class FaceDetection {
 
     public static FaceDetection getInstance(Context context)
     {
-
         //singleton
         if(faceDetector == null)
         {

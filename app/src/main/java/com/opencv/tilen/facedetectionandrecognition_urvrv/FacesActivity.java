@@ -58,6 +58,7 @@ public class FacesActivity extends Activity {
     protected void onResume() {
         super.onResume();
         mCardScroller.activate();
+
     }
 
     @Override
