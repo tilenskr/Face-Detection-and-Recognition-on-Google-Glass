@@ -139,14 +139,14 @@ public class FacesActivity extends Activity {
         Intent intent = getIntent();
         pictureName = intent.getStringExtra(RESOURCENAME);
         int numberOfFaces = intent.getIntExtra(FACENUMBER, -1);
-        facePictures = LocalPicturesDetection.loadBitmaps(numberOfFaces,this);
+        facePictures = MyUtils.loadBitmaps(numberOfFaces, this);
 
     }
 
     private opencv_core.IplImage getCurrentImage()
     {
         Bitmap bitmapImage = (Bitmap) mCardScroller.getSelectedItem();
-        opencv_core.IplImage iplImage = LocalPicturesDetection.BitmapToIplImage(bitmapImage);
+        opencv_core.IplImage iplImage = MyUtils.BitmapToIplImage(bitmapImage);
         return iplImage;
     }
 }

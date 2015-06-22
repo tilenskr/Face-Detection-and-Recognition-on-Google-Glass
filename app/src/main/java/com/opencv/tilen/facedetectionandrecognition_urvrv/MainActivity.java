@@ -371,7 +371,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         Imgproc.cvtColor(currentCameraImage,convertedPicture,Imgproc.COLOR_BGRA2RGB);
         Mat[] faceImages = faceDetection.getFacePictures(convertedPicture);
         if(faceImages != null) {
-            LocalPicturesDetection.saveBitmaps(faceImages, this); // it takes some time (not the best)
+            MyUtils.saveBitmaps(faceImages, this); // it takes some time (not the best)
             Intent intent = new Intent(this, FacesActivity.class);
             intent.putExtra(FacesActivity.RESOURCENAME, getString(R.string.camera_image));
             intent.putExtra(FacesActivity.FACENUMBER, faceImages.length);

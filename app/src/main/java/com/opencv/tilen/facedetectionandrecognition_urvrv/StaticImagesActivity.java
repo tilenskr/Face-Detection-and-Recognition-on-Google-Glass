@@ -118,7 +118,7 @@ public class StaticImagesActivity extends Activity {
         PictureData pictureData = (PictureData) mCardScroller.getSelectedItem();
         /*Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),
                 pictureData.getResourceId());
-        Mat matImage= LocalPicturesDetection.bitmapToMat(bitmapImage);*/
+        Mat matImage= MyUtils.bitmapToMat(bitmapImage);*/
         Mat matImage = null;
         try {
             matImage = Utils.loadResource(this, pictureData.getResourceId());
@@ -127,7 +127,7 @@ public class StaticImagesActivity extends Activity {
         }
         Mat[] faceImages = faceDetection.getFacePictures(matImage);
         if(faceImages != null) {
-            LocalPicturesDetection.saveBitmaps(faceImages, this); // it takes some time (not the best)
+            MyUtils.saveBitmaps(faceImages, this); // it takes some time (not the best)
             Intent intent = new Intent(this, FacesActivity.class);
             intent.putExtra(FacesActivity.RESOURCENAME, pictureData.getResourceName());
             intent.putExtra(FacesActivity.FACENUMBER, faceImages.length);

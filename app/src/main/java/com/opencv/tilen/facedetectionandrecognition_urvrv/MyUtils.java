@@ -19,24 +19,7 @@ import java.io.IOException;
 /**
  * Created by Tilen on 10.6.2015.
  */
-public class LocalPicturesDetection {
-    private Mat localPicture;
-    private Context mContext;
-    public LocalPicturesDetection(Context context,int resourceId) throws IOException {
-        this.mContext = context;
-       /* localPicture = new Mat();
-        Bitmap bMap= BitmapFactory.decodeResource(mContext.getResources(), R.drawable.test_image_0);
-        Utils.bitmapToMat(bMap, localPicture);*/
-
-        localPicture = Utils.loadResource(context, resourceId);
-        Global.TestDebug("LocalPicturesDetection.LocalPicturesDetection: localPicture " + localPicture.cols());
-
-
-    }
-
-    public Mat getlocalPicture() {
-        return localPicture;
-    }
+public class MyUtils {
     public static Bitmap matToBitmap(Mat inputPicture)
     {
         Mat convertedPicture = new Mat();
@@ -63,7 +46,7 @@ public class LocalPicturesDetection {
         Bitmap bitmapPicture;
         for(int i = 0; i < faceImages.length;i++) {
             file = new File(cacheDir, "faceImage" + i);
-            bitmapPicture = LocalPicturesDetection.matToBitmap(faceImages[i]);
+            bitmapPicture = MyUtils.matToBitmap(faceImages[i]);
             try {
                 out = new FileOutputStream(file);
                 bitmapPicture.compress(
