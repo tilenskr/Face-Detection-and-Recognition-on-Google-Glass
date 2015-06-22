@@ -14,6 +14,8 @@ import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
 
+import org.bytedeco.javacpp.opencv_core;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -25,13 +27,14 @@ public class FacesActivity extends Activity {
     private CardScrollView mCardScroller;
     private CardScrollAdapter mAdapter;
 
-    Bitmap[] facePictures;
-    String pictureName;
+    private Bitmap[] facePictures;
+    private String pictureName;
 
     private static final int SPEECH_REQUEST = 0;
 
-    TextToSpeech textToSpeech;
+    private TextToSpeech textToSpeech;
 
+    private FaceRecognition faceRecognition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +55,14 @@ public class FacesActivity extends Activity {
                 }
             }
         });
+        faceRecognition = FaceRecognition.getInstance(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mCardScroller.activate();
+
     }
 
     @Override
@@ -93,8 +98,9 @@ public class FacesActivity extends Activity {
             {
                 case R.id.itemPredict:
                     // when predicts a face notifies user as sound trough TextToSpeech
-                    //TODO change here
-                    textToSpeech.speak(String.format(getString(R.string.face_result_format), "John" ),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
+                    opencv_core.IplImage iplImage = getCurrentImage();
+                    String name = faceRecognition.predict(iplImage);
+                    textToSpeech.speak(String.format(getString(R.string.face_result_format), name),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
                             null);
                     break;
                 case R.id.itemTrain:
@@ -116,7 +122,14 @@ public class FacesActivity extends Activity {
             List<String> spokenText = data.getStringArrayListExtra(
                     RecognizerIntent.EXTRA_RESULTS);
             Global.InfoDebug("FacesActivity.onActivityResult(): spokenText: " + Arrays.toString(spokenText.toArray()));
-            // TODO Do something with spokenText.
+            String textFromSpeech = "";
+            for(String text :spokenText)
+                textFromSpeech += text + " ";
+            opencv_core.IplImage iplImage = getCurrentImage();
+            faceRecognition.train(iplImage,textFromSpeech);
+            textToSpeech.speak(getString(R.string.successfully_train),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
+                    null);
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -128,5 +141,12 @@ public class FacesActivity extends Activity {
         int numberOfFaces = intent.getIntExtra(FACENUMBER, -1);
         facePictures = LocalPicturesDetection.loadBitmaps(numberOfFaces,this);
 
+    }
+
+    private opencv_core.IplImage getCurrentImage()
+    {
+        Bitmap bitmapImage = (Bitmap) mCardScroller.getSelectedItem();
+        opencv_core.IplImage iplImage = LocalPicturesDetection.BitmapToIplImage(bitmapImage);
+        return iplImage;
     }
 }

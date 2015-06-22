@@ -42,6 +42,12 @@ public class FacesImagesCardAdapter extends CardScrollAdapter{
         View view = card.getView(convertView, parent);
         ImageView ivPicture = (ImageView) view.findViewById(R.id.ivPicture);
         ivPicture.setImageBitmap(faceImages[position]);
+        // new library testing
+        /*opencv_core.IplImage image = BitmapToIplImage(faceImages[position]);
+        Bitmap testBitmap  = IplImageToBitmap(image);
+        ivPicture.setImageBitmap(testBitmap);*/
+
+
         return view;
     }
 
@@ -55,4 +61,6 @@ public class FacesImagesCardAdapter extends CardScrollAdapter{
         return AdapterView.INVALID_POSITION;
 
     }
+
+
 }
