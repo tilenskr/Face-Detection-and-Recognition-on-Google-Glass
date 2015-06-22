@@ -239,14 +239,16 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 isCaptureFaceDetectionUsed = false;
                 return true;
             case R.id.itemFaceRecognition:// sub menu of Face Recognition
-                 faceRecognition = FaceRecognition.getInstance(this);
+                //faceRecognition = FaceRecognition.getInstance(this); is better to not use this, because somebody would tap twice and mistakenly deleted a database
                 return true;
             case R.id.itemClearFaceRecognition:
                 // clear database of FaceRecognizer
+                faceRecognition = FaceRecognition.getInstance(this);
                 faceRecognition.clearDatabase();
                 return true;
             case R.id.itemSpeechNames:
                 // names that are in Face Recognition Database
+                faceRecognition = FaceRecognition.getInstance(this);
                 List<String> allNames = faceRecognition.printAllNames();
                 String textToSpeak = "";
                 if(allNames.size() != 0)
