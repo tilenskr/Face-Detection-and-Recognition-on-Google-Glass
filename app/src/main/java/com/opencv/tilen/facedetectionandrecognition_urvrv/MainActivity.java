@@ -114,21 +114,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(STATE_ZOOM, zoom);
-        super.onSaveInstanceState(savedInstanceState);
-        Global.LogDebug("MainActivity.onSaveInstanceState(): zoom: " + zoom);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        zoom = savedInstanceState.getInt(STATE_ZOOM, 0);
-        Global.LogDebug("MainActivity.onRestoreInstanceState(): zoom: " + zoom);
-
-    }
-
-    @Override
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
             getMenuInflater().inflate(R.menu.menu_voice_main, menu);
@@ -208,6 +193,13 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 return true;
             case R.id.itemToggleFDOff:
                 isCaptureFaceDetectionUsed = false;
+                return true;
+            case R.id.itemFaceRecognition:
+                return true;
+            case R.id.itemClearFaceRecogntion:
+                // clear database of FaceRecognizer
+                FaceRecognition faceRecognition = FaceRecognition.getInstance(this);
+                faceRecognition.clearDatabase();
                 return true;
             default:
                 if(itemId < 0) // submenu

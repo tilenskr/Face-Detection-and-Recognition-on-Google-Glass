@@ -192,4 +192,24 @@ public class FaceRecognition {
         }
         Global.InfoDebug("FaceRecognition.printAllNames(): All names: " + Arrays.toString(allNames.toArray()));
     }
+
+    public void clearDatabase() // delete saved names and clear saved xml file
+    {
+        File file = new File(mContext.getFilesDir(), FACERECOGNIZER_XML);
+        if(file.exists())
+        {
+            // clear xml file
+            file.delete();
+            faceRecognizer = opencv_contrib.createLBPHFaceRecognizer();
+            saveFaceRecognizer();
+            // delete saved names
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.clear();
+            editor.commit();
+        }
+        else
+        {
+            return;
+        }
+    }
 }
