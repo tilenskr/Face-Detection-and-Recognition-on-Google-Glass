@@ -62,6 +62,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private Slider mSlider;
     private Slider.Indeterminate mIndeterminate;
 
+    // for recreating an Activity
+    private int zoom;
+    private final String STATE_ZOOM = "zoomLevel";
+
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -69,8 +73,8 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 case LoaderCallbackInterface.SUCCESS: {
                     Global.InfoDebug("MainActivity.mLoaderCallback.onManagerConnected:OpenCV loaded successfully");
                     faceDetection = FaceDetection.getInstance(mAppContext);
-                    mOpenCvCameraView.enableView();
-
+                    //mOpenCvCameraView.enableView();
+                    showCameraView();
                    /* Mat mMat = null;
                     try {
                         mMat = Utils.loadResource(mAppContext, R.drawable.test_image_0);
@@ -91,6 +95,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        Global.LogDebug("MainActivity.onCreate()");
         // to request voice menu on this activity
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         setContentView(R.layout.activity_main);
@@ -105,6 +110,21 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
        /* Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.test_image_0);
         ivPicture.setImageBitmap(bitmap);*/
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(STATE_ZOOM, zoom);
+        super.onSaveInstanceState(savedInstanceState);
+        Global.LogDebug("MainActivity.onSaveInstanceState(): zoom: " + zoom);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        zoom = savedInstanceState.getInt(STATE_ZOOM, 0);
+        Global.LogDebug("MainActivity.onRestoreInstanceState(): zoom: " + zoom);
 
     }
 
@@ -224,12 +244,15 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         super.onResume();
         Global.InfoDebug("MainActivity.onResume()");
         // mCardScroller.activate();
+        zoom = Preferences.onResume(this);
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_11, this, mLoaderCallback);
+        mOpenCvCameraView.setCurrentZoom(zoom);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Preferences.onPause(this, zoom);
         //mCardScroller.deactivate();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
@@ -238,6 +261,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Preferences.onDestroy(this);
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
     }
@@ -333,6 +357,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     private void showCameraView()
     {
         mOpenCvCameraView.enableView();
+        mOpenCvCameraView.setCurrentZoom(zoom); // little camera hop (not cute)
     }
 
     private void checkFacesOnImage() {
@@ -358,7 +383,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             AlertDialog alertDialog = new AlertDialog(this, R.drawable.ic_warning_150, R.string.no_face, R.string.tap_to_capture);
             alertDialog.setCancelable(true);
             alertDialog.show();
-            mOpenCvCameraView.enableView();
+            showCameraView();
         }
     }
 
@@ -374,11 +399,11 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 Global.TestDebug("MainActity.processMotionEventsZooming(): Difference beetween distances: " + differenceDistance);
                 if(differenceDistance > 10) // zooming in; threshold - ignore minor moves
                 {
-                    mOpenCvCameraView.setZoom(true);
+                    zoom = mOpenCvCameraView.setZoom(true);
                 }
                 else if(differenceDistance < -10 ) // zooming out; threshold - ignore minor moves
                 {
-                    mOpenCvCameraView.setZoom(false);
+                    zoom = mOpenCvCameraView.setZoom(false);
                 }
             }
             previousTouch1 = x1;

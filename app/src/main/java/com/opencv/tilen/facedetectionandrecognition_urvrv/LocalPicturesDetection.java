@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacpp.opencv_imgproc;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -96,5 +98,23 @@ public class LocalPicturesDetection {
             }
         }
         return faceImages;
+    }
+
+    //JavaCV library - testing purpose
+
+    public static Bitmap IplImageToBitmap(opencv_core.IplImage source) {
+        opencv_core.IplImage container = opencv_core.IplImage.create(source.width(), source.height(), opencv_core.IPL_DEPTH_8U, 4);
+        opencv_imgproc.cvCvtColor(source, container, opencv_imgproc.CV_BGR2RGBA);
+        Bitmap bitmap = Bitmap.createBitmap(source.width(), source.height(), Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(container.createBuffer());
+        return bitmap;
+    }
+
+    public static opencv_core.IplImage BitmapToIplImage(Bitmap source) {
+        opencv_core.IplImage container = opencv_core.IplImage.create(source.getWidth(), source.getHeight(), opencv_core.IPL_DEPTH_8U, 4);
+
+        source.copyPixelsToBuffer(container.createBuffer());
+        opencv_imgproc.cvCvtColor(container, container, opencv_imgproc.CV_BGR2RGBA); // works now for javacv library
+        return container;
     }
 }

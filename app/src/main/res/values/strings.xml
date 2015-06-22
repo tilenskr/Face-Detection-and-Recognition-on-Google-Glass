@@ -20,6 +20,7 @@
     <string name="face_name">Face</string>
     <string name="say_name">Say a Name</string>
     <string name="face_result_format">Face belongs to %1$s!</string>
+    <string name="successfully_train">You have successfully trained a face.</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

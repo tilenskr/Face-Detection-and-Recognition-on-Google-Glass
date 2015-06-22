@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by Tilen on 11.6.2015.
  */
-public class MyJavaCameraView extends JavaCameraView  {
+public class MyJavaCameraView extends JavaCameraView {
     public MyJavaCameraView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -28,14 +28,12 @@ public class MyJavaCameraView extends JavaCameraView  {
         return mCamera.getParameters().getSupportedPreviewSizes();
     }
 
-    public List<int[]> getPreviewFpsRangeList()
-    {
+    public List<int[]> getPreviewFpsRangeList() {
         return mCamera.getParameters().getSupportedPreviewFpsRange();
     }
 
     //doesn't work, maybe in future version
-    public void setFpsRange(int[] fpsRange)
-    {
+    public void setFpsRange(int[] fpsRange) {
         Camera.Parameters params = mCamera.getParameters();
         // *1000 - cause are scaled values
         params.setPreviewFpsRange(fpsRange[0], fpsRange[1]);
@@ -45,26 +43,35 @@ public class MyJavaCameraView extends JavaCameraView  {
         connectCamera(getWidth(), getHeight());
     }
 
-    public void setZoom(boolean increaseZoom)
-    {
+    public int setZoom(boolean increaseZoom) {
         Camera.Parameters params = mCamera.getParameters();
-        if(params.isZoomSupported() && mCamera != null)
-        {
-            int currentZoom = params.getZoom();
+        int currentZoom = 0;
+        if (params.isZoomSupported() && mCamera != null) {
+            currentZoom = params.getZoom();
             Global.LogDebug("MyJavaCameraView.setZoom(): Zoom is " + currentZoom);
-            if(increaseZoom) {
+            if (increaseZoom) {
                 currentZoom = currentZoom + 1;
-                if(currentZoom > params.getMaxZoom())
+                if (currentZoom > params.getMaxZoom())
                     currentZoom = params.getZoom();
                 params.setZoom(currentZoom);
-            }
-            else {
-                currentZoom = currentZoom -1;
-                if(currentZoom < 0)
+            } else {
+                currentZoom = currentZoom - 1;
+                if (currentZoom < 0)
                     currentZoom = 0;
                 params.setZoom(currentZoom);
             }
             mCamera.setParameters(params);
+        }
+        return currentZoom;
+    }
+
+    public void setCurrentZoom(int zoom) {
+        if (mCamera != null) {
+            Camera.Parameters params = mCamera.getParameters();
+            if(params.isZoomSupported()) {
+                params.setZoom(zoom);
+                mCamera.setParameters(params);
+            }
         }
     }
 

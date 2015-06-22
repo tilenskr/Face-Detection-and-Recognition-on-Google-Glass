@@ -71,12 +71,12 @@ public class FaceDetection {
             }
         }
         catch (FileNotFoundException ex) {
-            Global.ErrorDebug("FaceDetection.loadClassifierString(): Couldn't find the file " +
+            Global.ErrorDebug("FaceDetection.loadClassifierString(): Couldn't find the file "
                     + resourceId + " " + ex);
             return;
         }
         catch (IOException ex){
-            Global.ErrorDebug("FaceDetection.loadClassifierString(): Error reading file " +
+            Global.ErrorDebug("FaceDetection.loadClassifierString(): Error reading file "
                     + resourceId + " " + ex);
             return;
         }
