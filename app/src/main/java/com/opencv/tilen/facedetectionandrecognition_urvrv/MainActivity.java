@@ -117,11 +117,15 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
             getMenuInflater().inflate(R.menu.menu_voice_main, menu);
+            Global.LogDebug("MainActivity.onCreatePanelMenu()");
             return true;
         }
         // Pass through to super to setup touch menu.
         return super.onCreatePanelMenu(featureId, menu);
     }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -136,13 +140,33 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         {
             switch (item.getItemId())
             {
-                case R.id.itemDetect:
+               case R.id.itemDetect:
+                   if(isCaptureFaceDetectionUsed == true) // lag for is capture
+                        mOpenCvCameraView.disableView();
+                    break;
+                case R.id.itemLBPClassifier:
+                    faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
+                    checkFacesOnImage();
+                    break;
+                case R.id.itemHAARClassifier:
+                    faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
                     checkFacesOnImage();
                     break;
             }
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public void onPanelClosed(int featureId, Menu menu) {
+        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+            Global.LogDebug("MainActivity.onPanelClosed()");
+            if(isCaptureFaceDetectionUsed == true)
+                showCameraView();
+            return;
+        }
+        super.onPanelClosed(featureId, menu);
     }
 
 
@@ -188,8 +212,13 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 return true;
             case R.id.itemSubmenuToggleFaceDetection:
                 return true;
-            case R.id.itemToggleFDOn:
+            case R.id.itemLBPClassifier:
                 isCaptureFaceDetectionUsed = true;
+                faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
+                return true;
+            case R.id.itemHAARClassifier:
+                isCaptureFaceDetectionUsed = true;
+                faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
                 return true;
             case R.id.itemToggleFDOff:
                 isCaptureFaceDetectionUsed = false;

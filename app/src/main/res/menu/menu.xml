@@ -6,8 +6,11 @@
         android:title="@string/toggle_face_detection">
         <menu>
             <item
-                android:id="@+id/itemToggleFDOn"
-                android:title="@string/toggle_face_detection_on" />
+                android:id="@+id/itemLBPClassifier"
+                android:title="@string/lbp_classifier" />
+            <item
+                android:id="@+id/itemHAARClassifier"
+                android:title="@string/haar_classifier" />
             <item
                 android:id="@+id/itemToggleFDOff"
                 android:title="@string/toggle_face_detection_off" />

@@ -11,6 +11,8 @@
     <string name="no_face">No face detected</string>
     <string name="tap_choose_picture">Tap to choose another picture</string>
     <string name="toggle_face_detection">Camera Detection</string>
+    <string name="lbp_classifier">LBP Classifier</string>
+    <string name="haar_classifier">HAAR Classifier</string>
     <string name="toggle_face_detection_on">On</string>
     <string name="toggle_face_detection_off">Off</string>
     <string name="camera_image">Camera Image</string>

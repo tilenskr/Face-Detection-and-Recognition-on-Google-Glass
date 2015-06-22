@@ -2,5 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/itemDetect"
-        android:title="@string/detect_faces"/>
+        android:title="@string/detect_faces">
+        <menu>
+            <item
+                android:id="@+id/itemLBPClassifier"
+                android:title="@string/lbp_classifier" />
+            <item
+                android:id="@+id/itemHAARClassifier"
+                android:title="@string/haar_classifier" />
+        </menu>
+    </item>
 </menu>
