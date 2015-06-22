@@ -77,6 +77,14 @@ public class StaticImagesActivity extends Activity {
             switch (item.getItemId())
             {
                 case R.id.itemDetect:
+                    faceDetection = FaceDetection.getInstance(this);
+                    break;
+                case R.id.itemLBPClassifier:
+                    faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
+                    checkFacesOnImage();
+                    break;
+                case R.id.itemHAARClassifier:
+                    faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
                     checkFacesOnImage();
                     break;
             }
@@ -114,7 +122,6 @@ public class StaticImagesActivity extends Activity {
     {
         // slider slows down performance TODO - needs some actual tests
         mIndeterminate = mSlider.startIndeterminate();
-        faceDetection = FaceDetection.getInstance(this);
         PictureData pictureData = (PictureData) mCardScroller.getSelectedItem();
         /*Bitmap bitmapImage = BitmapFactory.decodeResource(getResources(),
                 pictureData.getResourceId());
