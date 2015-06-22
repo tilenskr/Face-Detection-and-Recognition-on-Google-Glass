@@ -1,8 +1,10 @@
 package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.DisplayMetrics;
@@ -15,6 +17,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.google.android.glass.media.Sounds;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollView;
 import com.google.android.glass.widget.Slider;
@@ -381,6 +384,9 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public void onThreeTap() {
+        // imitating sound for clicking
+        AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.playSoundEffect(Sounds.TAP);
         // mOpenCvCameraView needs to be enabled and we can not do this in onManagerConnected (mCamera is null)
         if(cameraResolutions == null) {
             cameraResolutions = mOpenCvCameraView.getResolutionList();

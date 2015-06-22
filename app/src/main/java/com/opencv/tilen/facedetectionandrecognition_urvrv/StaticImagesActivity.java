@@ -1,12 +1,18 @@
 package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 
+import com.google.android.glass.media.Sounds;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
@@ -20,7 +26,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaticImagesActivity extends Activity {
+public class StaticImagesActivity extends Activity{
 
     private CardScrollView mCardScroller;
     private CardScrollAdapter mAdapter;
@@ -46,6 +52,14 @@ public class StaticImagesActivity extends Activity {
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(mCardScroller);
+        mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                mAudioManager.playSoundEffect(Sounds.TAP);
+                openOptionsMenu();
+            }
+        });
     }
 
     @Override
@@ -62,7 +76,8 @@ public class StaticImagesActivity extends Activity {
 
     @Override
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
-        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
+                featureId == Window.FEATURE_OPTIONS_PANEL) {
             getMenuInflater().inflate(R.menu.menu_voice_main, menu);
             return true;
         }
@@ -72,7 +87,8 @@ public class StaticImagesActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if(featureId == WindowUtils.FEATURE_VOICE_COMMANDS)
+        if(featureId == WindowUtils.FEATURE_VOICE_COMMANDS ||
+                featureId == Window.FEATURE_OPTIONS_PANEL)
         {
             switch (item.getItemId())
             {
@@ -81,10 +97,14 @@ public class StaticImagesActivity extends Activity {
                     break;
                 case R.id.itemLBPClassifier:
                     faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
+                    if(featureId == Window.FEATURE_OPTIONS_PANEL)
+                        closeOptionsMenu();
                     checkFacesOnImage();
                     break;
                 case R.id.itemHAARClassifier:
                     faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
+                    if(featureId == Window.FEATURE_OPTIONS_PANEL)
+                        closeOptionsMenu();
                     checkFacesOnImage();
                     break;
             }

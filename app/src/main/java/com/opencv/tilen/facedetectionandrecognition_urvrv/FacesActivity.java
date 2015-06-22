@@ -1,15 +1,21 @@
 package com.opencv.tilen.facedetectionandrecognition_urvrv;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 
+import com.google.android.glass.media.Sounds;
 import com.google.android.glass.view.WindowUtils;
 import com.google.android.glass.widget.CardScrollAdapter;
 import com.google.android.glass.widget.CardScrollView;
@@ -56,6 +62,15 @@ public class FacesActivity extends Activity {
             }
         });
         faceRecognition = FaceRecognition.getInstance(this);
+
+        mCardScroller.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                AudioManager mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                mAudioManager.playSoundEffect(Sounds.TAP);
+                openOptionsMenu();
+            }
+        });
     }
 
     @Override
@@ -82,7 +97,8 @@ public class FacesActivity extends Activity {
 
     @Override
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
-        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
+        if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS||
+                featureId == Window.FEATURE_OPTIONS_PANEL) {
             getMenuInflater().inflate(R.menu.menu_faces, menu);
             return true;
         }
@@ -92,7 +108,8 @@ public class FacesActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        if(featureId == WindowUtils.FEATURE_VOICE_COMMANDS)
+        if(featureId == WindowUtils.FEATURE_VOICE_COMMANDS||
+                featureId == Window.FEATURE_OPTIONS_PANEL)
         {
             switch (item.getItemId())
             {
