@@ -163,15 +163,19 @@ public class FaceRecognition {
         return countNames;
     }
 
-    public String predict(opencv_core.IplImage image)
-    {
+    public String predict(opencv_core.IplImage image) {
         opencv_core.IplImage grayImage = opencv_core.IplImage.create(image.width(), image.height(), opencv_core.IPL_DEPTH_8U, 1);
         opencv_imgproc.cvCvtColor(image, grayImage, opencv_imgproc.CV_RGB2GRAY); // works now for javacv library
         opencv_core.Mat matImage = new opencv_core.Mat(grayImage);
-        int predictLabel = faceRecognizer.predict(matImage);
-        Global.LogDebug("FaceRecognition.predict(): predictLabel:" + predictLabel);
-        String name = getNameFromLabel(predictLabel);
-        return name;
+        int countNames = sharedPref.getInt(KEY_PREF_COUNT_NAME, 0);
+        if (countNames != 0) {
+            int predictLabel = faceRecognizer.predict(matImage);
+            Global.LogDebug("FaceRecognition.predict(): predictLabel:" + predictLabel);
+            String name = getNameFromLabel(predictLabel);
+            return name;
+        }
+        else
+            return "-1";
     }
 
     private String getNameFromLabel(int label)
@@ -180,7 +184,7 @@ public class FaceRecognition {
         return name;
     }
 
-    private void printAllNames() // for informational purposes
+    public List<String> printAllNames() // for informational purposes
     {
         int countNames = sharedPref.getInt(KEY_PREF_COUNT_NAME, 0);
         List<String> allNames = new ArrayList<>();
@@ -191,6 +195,7 @@ public class FaceRecognition {
             allNames.add(tempName);
         }
         Global.InfoDebug("FaceRecognition.printAllNames(): All names: " + Arrays.toString(allNames.toArray()));
+        return allNames;
     }
 
     public void clearDatabase() // delete saved names and clear saved xml file

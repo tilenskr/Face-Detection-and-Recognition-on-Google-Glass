@@ -27,8 +27,11 @@
         android:title="@string/face_recognition">
         <menu>
             <item
-                android:id="@+id/itemClearFaceRecogntion"
+                android:id="@+id/itemClearFaceRecognition"
                 android:title="@string/clear_database_recognition" />
+            <item
+                android:id="@+id/itemSpeechNames"
+                android:title="@string/current_names" />
         </menu>
     </item>
 </menu>

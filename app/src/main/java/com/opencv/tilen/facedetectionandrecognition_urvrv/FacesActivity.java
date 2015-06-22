@@ -100,8 +100,17 @@ public class FacesActivity extends Activity {
                     // when predicts a face notifies user as sound trough TextToSpeech
                     opencv_core.IplImage iplImage = getCurrentImage();
                     String name = faceRecognition.predict(iplImage);
-                    textToSpeech.speak(String.format(getString(R.string.face_result_format), name),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
-                            null);
+                    if(!name.equals("-1"))
+                    {
+                        textToSpeech.speak(String.format(getString(R.string.face_result_format), name),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
+                                null);
+                    }
+                    else
+                    {
+                        AlertDialog alertDialog = new AlertDialog(this, R.drawable.ic_warning_150, R.string.no_names_there, R.string.you_need_to_train);
+                        alertDialog.setCancelable(true);
+                        alertDialog.show();
+                    }
                     break;
                 case R.id.itemTrain:
                     // speak and say nickname (or just name) that describe a person (can contain more words)

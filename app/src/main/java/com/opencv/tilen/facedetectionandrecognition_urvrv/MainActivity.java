@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +27,7 @@ import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * An {@link Activity} showing a tuggable "Hello World!" card.
@@ -41,6 +43,7 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
 
     private MyJavaCameraView mOpenCvCameraView;
     private FaceDetection faceDetection;
+    private FaceRecognition faceRecognition;
     private Gestures mGestureDetector;
     private RelativeLayout rlMainActivity;
 
@@ -65,6 +68,9 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     // for recreating an Activity
     private int zoom;
     private final String STATE_ZOOM = "zoomLevel";
+
+    private TextToSpeech textToSpeech;
+
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -99,6 +105,15 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         // to request voice menu on this activity
         getWindow().requestFeature(WindowUtils.FEATURE_VOICE_COMMANDS);
         setContentView(R.layout.activity_main);
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener(){
+
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.UK);
+                }
+            }
+        });
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         mGestureDetector = new Gestures(this, this);
         rlMainActivity = (RelativeLayout) findViewById(R.id.rlMainActivity);
@@ -223,12 +238,32 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             case R.id.itemToggleFDOff:
                 isCaptureFaceDetectionUsed = false;
                 return true;
-            case R.id.itemFaceRecognition:
+            case R.id.itemFaceRecognition:// sub menu of Face Recognition
+                 faceRecognition = FaceRecognition.getInstance(this);
                 return true;
-            case R.id.itemClearFaceRecogntion:
+            case R.id.itemClearFaceRecognition:
                 // clear database of FaceRecognizer
-                FaceRecognition faceRecognition = FaceRecognition.getInstance(this);
                 faceRecognition.clearDatabase();
+                return true;
+            case R.id.itemSpeechNames:
+                // names that are in Face Recognition Database
+                List<String> allNames = faceRecognition.printAllNames();
+                String textToSpeak = "";
+                if(allNames.size() != 0)
+                {
+                    textToSpeak = getString(R.string.faces_database);
+                    for(int i = 0; i < allNames.size()-1; i++)
+                    {
+                        textToSpeak += allNames.get(i) + ", ";
+                    }
+                    textToSpeak += allNames.get(allNames.size()-1) + ". ";
+                }
+                else
+                {
+                    textToSpeak = getString(R.string.no_names_database);
+                }
+                textToSpeech.speak(textToSpeak,TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
+                        null);
                 return true;
             default:
                 if(itemId < 0) // submenu
@@ -285,6 +320,10 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
         Preferences.onDestroy(this);
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+        if(textToSpeech !=null){
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
     }
 
     @Override
