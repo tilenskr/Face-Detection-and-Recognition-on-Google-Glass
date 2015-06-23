@@ -230,6 +230,14 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             case R.id.itemToggleFDOff:
                 isCaptureFaceDetectionUsed = false;
                 return true;
+            case R.id.itemFaceDetection: // submenu Face Detection
+                return true;
+            case R.id.itemLBP:
+                faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
+                return true;
+            case R.id.itemHAAR:
+                faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
+                return true;
             case R.id.itemFaceRecognition:// sub menu of Face Recognition
                 //faceRecognition = FaceRecognition.getInstance(this); is better to not use this, because somebody would tap twice and mistakenly deleted a database
                 return true;
@@ -258,14 +266,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 }
                 textToSpeech.speak(textToSpeak,TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
                         null);
-                return true;
-            case R.id.itemDetectFaces: // last submenu
-                return true;
-            case R.id.itemLBP:
-                faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
-                return true;
-            case R.id.itemHAAR:
-                faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
                 return true;
             default:
                 if(itemId < 0) // submenu
