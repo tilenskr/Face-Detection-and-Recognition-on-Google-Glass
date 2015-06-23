@@ -7,7 +7,8 @@
     <string name="resolutions">Available Resolutions</string>
     <string name="fps_ranges">Available FPS Ranges</string>
     <string name="title_activity_static_images">StaticImagesActivity</string>
-    <string name="detect_faces">Detect faces with </string>
+    <string name="detect_faces">Detect faces</string>
+    <string name="detect_faces_with">Detect faces with </string>
     <string name="no_face">No face detected</string>
     <string name="tap_choose_picture">Tap to choose another picture</string>
     <string name="toggle_face_detection">Camera Detection</string>

@@ -159,15 +159,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
             switch (item.getItemId())
             {
                case R.id.itemDetect:
-                   if(isCaptureFaceDetectionUsed == true) // lag for is capture
-                        mOpenCvCameraView.disableView();
-                    break;
-                case R.id.itemLBPClassifier:
-                    faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
-                    checkFacesOnImage();
-                    break;
-                case R.id.itemHAARClassifier:
-                    faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
                     checkFacesOnImage();
                     break;
             }
@@ -180,8 +171,6 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
     public void onPanelClosed(int featureId, Menu menu) {
         if (featureId == WindowUtils.FEATURE_VOICE_COMMANDS) {
             Global.LogDebug("MainActivity.onPanelClosed()");
-            if(isCaptureFaceDetectionUsed == true)
-                showCameraView();
             return;
         }
         super.onPanelClosed(featureId, menu);
@@ -269,6 +258,14 @@ public class MainActivity extends Activity implements CameraBridgeViewBase.CvCam
                 }
                 textToSpeech.speak(textToSpeak,TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
                         null);
+                return true;
+            case R.id.itemDetectFaces: // last submenu
+                return true;
+            case R.id.itemLBP:
+                faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
+                return true;
+            case R.id.itemHAAR:
+                faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
                 return true;
             default:
                 if(itemId < 0) // submenu

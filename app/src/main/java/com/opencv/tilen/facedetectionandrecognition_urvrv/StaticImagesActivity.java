@@ -94,15 +94,6 @@ public class StaticImagesActivity extends Activity{
             {
                 case R.id.itemDetect:
                     faceDetection = FaceDetection.getInstance(this);
-                    break;
-                case R.id.itemLBPClassifier:
-                    faceDetection.setUpCascadeClassifier(faceDetection.getLbpFrontalFaceClassifierPath());
-                    if(featureId == Window.FEATURE_OPTIONS_PANEL)
-                        closeOptionsMenu();
-                    checkFacesOnImage();
-                    break;
-                case R.id.itemHAARClassifier:
-                    faceDetection.setUpCascadeClassifier(faceDetection.getHaarfrontalFaceClassifierPath());
                     if(featureId == Window.FEATURE_OPTIONS_PANEL)
                         closeOptionsMenu();
                     checkFacesOnImage();
