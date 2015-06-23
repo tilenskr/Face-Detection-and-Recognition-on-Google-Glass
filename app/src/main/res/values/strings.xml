@@ -28,8 +28,8 @@
     <string name="current_names">Current Names</string>
     <string name="no_names_there">There are no names.</string>
     <string name="you_need_to_train">You need to train first.</string>
-    <string name="no_names_database">There are no names in Face Recognition Database.</string>
-    <string name="faces_database">Names in Face Recognition Database are: </string>
+    <string name="no_names_database">There are no names in database.</string>
+    <string name="faces_database">Names in database are: </string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
