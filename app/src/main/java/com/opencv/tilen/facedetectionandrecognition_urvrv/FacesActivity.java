@@ -119,6 +119,7 @@ public class FacesActivity extends Activity {
                     String name = faceRecognition.predict(iplImage);
                     if(!name.equals("-1"))
                     {
+                        textToSpeech.setSpeechRate(1);
                         textToSpeech.speak(String.format(getString(R.string.face_result_format), name),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
                                 null);
                     }
@@ -153,6 +154,7 @@ public class FacesActivity extends Activity {
                 textFromSpeech += text + " ";
             opencv_core.IplImage iplImage = getCurrentImage();
             faceRecognition.train(iplImage,textFromSpeech);
+            textToSpeech.setSpeechRate(2);
             textToSpeech.speak(getString(R.string.successfully_train),TextToSpeech.QUEUE_FLUSH, // old API level method, since we use 19 is ok (deprecated in 21)
                     null);
 
