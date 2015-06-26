@@ -1,5 +1,5 @@
 # Face Detection and Recognition on Google Glass #
-This application enable user to detect faces (real-time) and create their own database for face recognition.
+This application enable user to detect faces (real-time) and create their own database for face recognition. It uses OpenCV for Android and JavaCV.
 
 ## Setup (copied from *https://github.com/space150/google-glass-playground/tree/master/OpenCVFaceDetection*) ##
 1. Install and configure the OpenCV4Android SDK. Thorough instructions can be found in the OpenCV4Android SDK tutorial.
@@ -8,3 +8,5 @@ This application enable user to detect faces (real-time) and create their own da
 4. Build and run the project.
 
 ## Usage ##
+* At normal use application does not detect faces.
+* If you tap with three fingers you reach Main Menu. First you can choose preferred resolutions from camera
