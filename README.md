@@ -9,4 +9,5 @@ This application enable user to detect faces (real-time) and create their own da
 
 ## Usage ##
 * At normal use application does not detect faces.
-* If you tap with three fingers you reach Main Menu. First you can choose preferred resolutions from camera
+* If you tap with three fingers you reach Main Menu. Firstly you can choose preferred resolutions from camera. In Camera Detection you can choose real-time Face Detection with two different classifiers (laggy). In Image Manipulation you can detect faces on images, which are in drawable folder. In Face Detection you choose, which classifier to use when detecting faces and in Face Recognition you can get all names, which are in Face Recognition database via TextToSpeech API or clear database.
+* To detect faces you simply say 'Ok Google' and then Detect Faces. You can then predict or train individual face by saying 'Ok Google' or by tap to reach menu.
